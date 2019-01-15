@@ -3,13 +3,13 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = ( env, options ) => {
 	return {
-		entry: ['./src/index.js','./src/style.css'],
+		entry: ['./src/index.js','./src/style.scss'],
 		
 		output: {
 			path: path.resolve( __dirname, 'dist' ),
 			filename: 'index.js',
 		},
-		devtool:  'cheap-eval-source-map',
+		// devtool:  'cheap-eval-source-map',
 		module: {
 			rules: [
 				{
@@ -20,10 +20,28 @@ module.exports = ( env, options ) => {
 					exclude: /(node_modules)/
 				},
 				{
-					test: /\.css$/,
+					test: /\.scss$/,
 					use: [
 						MiniCssExtractPlugin.loader,
-						"css-loader"
+						{
+							loader: "css-loader"
+						},
+						{
+							loader: 'postcss-loader',
+							options: {
+								plugins: () => [
+									require('autoprefixer')
+								],
+								sourceMap: true
+							}
+						},
+						{
+							loader: 'sass-loader',
+							options: {
+								sourceMap: true
+						
+							}
+						}
 					]
 				},
 				{
@@ -44,7 +62,7 @@ module.exports = ( env, options ) => {
 		plugins: [
 			new MiniCssExtractPlugin({
 				filename: './style.css',
-				chunkFilename: '[id].css'
+				chunkFilename: '[id].css',
 			})
 		],
 		
